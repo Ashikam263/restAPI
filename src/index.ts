@@ -7,6 +7,7 @@ import { movieRouter } from "./routes/movie.routes";
 import "reflect-metadata";
 import { errorHandler } from "./middleware/errorHandler";
 dotenv.config();
+import { Pool, QueryResult } from 'pg';
 
 const { Client } = require('pg');
 const { Pool } = require('pg');
@@ -30,19 +31,22 @@ AppDataSource.initialize()
   })
   .catch((error) => console.log(error));
 
-  const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'your_database_name',
-    password: 'your_password',
-    port: 5432,
-  });
+// Configure the database connection
+const pool = new Pool({
+  user: 'postgres', 
+  host: 'localhost',
+  database: 'your_database_name', 
+  password: 'your_password', 
+  port: 5432, 
+});
 
-  pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-      console.error('Error connecting to PostgreSQL:', err);
-    } else {
-      console.log('Connected to PostgreSQL:', res.rows[0]);
-    }
-    pool.end(); // Close the connection pool
-  });
+
+// Example query to test the connection
+pool.query('SELECT NOW()', (err: Error, res: QueryResult) => {
+  if (err) {
+    console.error('Error connecting to PostgreSQL:', err);
+  } else {
+    console.log('Connected to PostgreSQL. Current time is:', res.rows[0].now);
+  }
+  pool.end(); 
+});
