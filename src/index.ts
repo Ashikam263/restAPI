@@ -8,6 +8,8 @@ import "reflect-metadata";
 import { errorHandler } from "./middleware/errorHandler";
 dotenv.config();
 
+const { Client } = require('pg');
+const { Pool } = require('pg');
 const app = express();
 app.use(express.json());
 app.use(errorHandler)
@@ -27,3 +29,20 @@ AppDataSource.initialize()
     console.log("Data Source has been initialized!");
   })
   .catch((error) => console.log(error));
+
+  const pool = new Pool({
+    user: 'postgres',
+    host: 'localhost',
+    database: 'your_database_name',
+    password: 'your_password',
+    port: 5432,
+  });
+
+  pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+      console.error('Error connecting to PostgreSQL:', err);
+    } else {
+      console.log('Connected to PostgreSQL:', res.rows[0]);
+    }
+    pool.end(); // Close the connection pool
+  });
